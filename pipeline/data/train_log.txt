@@ -1,0 +1,61 @@
+== Tuning on 2018 validation sell-offs (train 2010-2017) ==
+  alpha=0.0    stress_w=0.0  val MAE=6.38 pp
+  alpha=0.0    stress_w=1.0  val MAE=6.27 pp
+  alpha=0.0    stress_w=3.0  val MAE=6.25 pp
+  alpha=0.0    stress_w=6.0  val MAE=6.27 pp
+  alpha=0.001  stress_w=0.0  val MAE=6.38 pp
+  alpha=0.001  stress_w=1.0  val MAE=6.27 pp
+  alpha=0.001  stress_w=3.0  val MAE=6.24 pp
+  alpha=0.001  stress_w=6.0  val MAE=6.27 pp
+  alpha=0.01   stress_w=0.0  val MAE=6.37 pp
+  alpha=0.01   stress_w=1.0  val MAE=6.27 pp
+  alpha=0.01   stress_w=3.0  val MAE=6.24 pp
+  alpha=0.01   stress_w=6.0  val MAE=6.26 pp
+  alpha=0.03   stress_w=0.0  val MAE=6.61 pp
+  alpha=0.03   stress_w=1.0  val MAE=6.42 pp
+  alpha=0.03   stress_w=3.0  val MAE=6.32 pp
+  alpha=0.03   stress_w=6.0  val MAE=6.29 pp
+Best: alpha=0.01, stress_weight=3.0
+
+== Test on unseen crises (train 2010-2019) ==
+  COVID-19 crash                     full         MAE ours=10.11  no-stress=10.26  market= 9.67  capm=12.55  rank-corr ours=0.37 capm=0.05
+  COVID-19 crash                     market_only  MAE ours=11.01  no-stress=11.18  market=11.25  capm=11.60  rank-corr ours=0.36 capm=0.22
+  COVID-19 crash                     sector_only  MAE ours=13.99  no-stress=14.21  market=13.56  capm=12.91  rank-corr ours=0.04 capm=0.22
+  2022 rate-hike bear market         full         MAE ours=14.90  no-stress=15.27  market=20.82  capm=18.38  rank-corr ours=0.65 capm=0.49
+  2022 rate-hike bear market         market_only  MAE ours=18.39  no-stress=18.97  market=19.52  capm=18.18  rank-corr ours=0.42 capm=0.51
+  2022 rate-hike bear market         sector_only  MAE ours=17.02  no-stress=17.75  market=19.47  capm=17.92  rank-corr ours=0.56 capm=0.51
+  Aug 2024 yen carry-trade unwind    full         MAE ours= 5.85  no-stress= 5.86  market= 8.40  capm= 6.85  rank-corr ours=0.75 capm=0.67
+  Aug 2024 yen carry-trade unwind    market_only  MAE ours= 6.45  no-stress= 6.45  market= 8.22  capm= 6.31  rank-corr ours=0.61 capm=0.72
+  Aug 2024 yen carry-trade unwind    sector_only  MAE ours= 6.55  no-stress= 6.45  market= 8.67  capm= 6.61  rank-corr ours=0.73 capm=0.72
+  April 2025 tariff shock            full         MAE ours= 4.03  no-stress= 4.21  market= 5.17  capm= 4.13  rank-corr ours=0.60 capm=0.59
+  April 2025 tariff shock            market_only  MAE ours= 4.04  no-stress= 4.12  market= 5.19  capm= 4.16  rank-corr ours=0.66 capm=0.66
+  April 2025 tariff shock            sector_only  MAE ours= 4.46  no-stress= 4.53  market= 5.23  capm= 4.29  rank-corr ours=0.65 capm=0.66
+
+Overall MAE (pp): {'full': {'ours': 8.73, 'ours_no_stress': 8.9, 'baseline_market': 11.02, 'baseline_capm': 10.48}, 'market_only': {'ours': 9.97, 'ours_no_stress': 10.18, 'baseline_market': 11.04, 'baseline_capm': 10.06}, 'sector_only': {'ours': 10.51, 'ours_no_stress': 10.74, 'baseline_market': 11.73, 'baseline_capm': 10.43}}
+Random 4-asset portfolios, market-only scenario MAE (pp): {'ours': 6.33, 'baseline_market': 6.77, 'baseline_capm': 6.29}
+
+Largest misses:
+  XOM      2022 rate-hike bear market         predicted  -26.3%  actual   59.8%
+  CVX      2022 rate-hike bear market         predicted  -28.9%  actual   35.9%
+  BTC-USD  2022 rate-hike bear market         predicted   -9.7%  actual  -58.8%
+  TLT      2022 rate-hike bear market         predicted   14.5%  actual  -29.3%
+  META     2022 rate-hike bear market         predicted  -24.1%  actual  -62.3%
+  NFLX     COVID-19 crash                     predicted  -44.0%  actual   -6.7%
+  INTC     Aug 2024 yen carry-trade unwind    predicted   -8.1%  actual  -41.4%
+  BA       COVID-19 crash                     predicted  -37.9%  actual  -68.8%
+
+Error by asset group (pp):
+  full         Crypto                                     ours= 20.6  capm= 23.8  n=1
+  full         Cyclical stocks (banks, energy, industry)  ours=  8.3  capm= 10.0  n=9
+  full         Defensive stocks                           ours=  6.3  capm=  8.2  n=7
+  full         Funds (index, bonds, gold)                 ours=  2.5  capm=  4.9  n=1
+  full         Tech & growth stocks                       ours= 10.3  capm= 11.7  n=10
+  market_only  Crypto                                     ours= 21.4  capm= 23.8  n=1
+  market_only  Cyclical stocks (banks, energy, industry)  ours= 10.0  capm= 10.0  n=9
+  market_only  Defensive stocks                           ours=  8.1  capm=  8.2  n=7
+  market_only  Funds (index, bonds, gold)                 ours=  6.2  capm=  5.9  n=4
+  market_only  Tech & growth stocks                       ours= 11.6  capm= 11.7  n=10
+Preset portfolios, market-only (pp): {'Tech fan': 6.4, 'Balanced starter': 4.0, 'Dividends & defensives': 8.5, 'Crypto + growth': 11.2}
+
+== Refit on all data for the live app ==
+Exported model.json, episodes.json, evaluation.json to C:\Users\HP\Documents\Temirlan\my-activities\veritas ai hackaton\markettwin\web\data

@@ -1,0 +1,1 @@
+window.MT_AUDIT = {"model":"gemini-3.5-flash-lite","date":"2026-11-15","reports":36,"structured":36,"numbers_verified":478,"numbers_unverified":0,"languages":["English","Russian","Kazakh"],"false_accept_pct":{"one_decimal_percent":6.3,"whole_percent":34.1,"dollars":2.6}};

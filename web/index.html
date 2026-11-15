@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MarketTwin AI — See the risk before the market moves</title>
+<meta name="description" content="Stress-test a beginner's stock portfolio against market scenarios with a model tested on four real crises it never saw.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230c1016'/%3E%3Cpath d='M6 22l6-7 5 4 9-11' stroke='%23d9f26b' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="#top"><span class="brand-dot"></span>MarketTwin<span class="brand-ai">AI</span></a>
+  <nav>
+    <a href="#build">Portfolio</a>
+    <a href="#simulate">Simulator</a>
+    <a href="#report">AI report</a>
+    <a href="#evidence">How we tested it</a>
+  </nav>
+</header>
+
+<main id="top">
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero-text">
+    <p class="eyebrow">Stress-testing for first-time investors</p>
+    <h1>See the risk <em>before</em> the market moves.</h1>
+    <p class="lede">Add the 3–6 stocks you own. Pick a shock like <q>tech falls 20%</q>.
+      MarketTwin shows what happens to your money, holding by holding. Its numbers come from a model
+      checked against four real crashes it never saw in training. An AI then explains the result in plain words,
+      and every number it writes is checked against what the model calculated.</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="#build">Stress-test my portfolio</a>
+      <a class="btn btn-ghost" href="#evidence">See the evidence</a>
+    </div>
+  </div>
+  <aside class="hero-card" id="heroStats" aria-label="Model test results">
+    <p class="card-label">Tested on 4 crises from 2020–2025 the model never saw</p>
+    <div class="stat-row" id="heroStatRows"></div>
+    <p class="card-foot">Average error in predicting each asset's move during a crisis, in percentage points. Lower is better.</p>
+  </aside>
+</section>
+
+<!-- ============ 1. BUILD ============ -->
+<section class="panel" id="build">
+  <div class="panel-head">
+    <span class="step">01</span>
+    <div>
+      <h2>Your portfolio</h2>
+      <p>Pick 3–6 assets and how much of your money is in each. Start from an example if you like.</p>
+    </div>
+  </div>
+
+  <div class="presets" id="presets"></div>
+
+  <div class="builder">
+    <div class="holdings" id="holdings"></div>
+    <div class="builder-side">
+      <label class="field">
+        <span>Total invested (USD)</span>
+        <input type="number" id="amount" min="10" step="10" value="1000">
+      </label>
+      <label class="field">
+        <span>Add an asset</span>
+        <select id="addAsset"></select>
+      </label>
+      <p class="hint" id="weightHint"></p>
+    </div>
+  </div>
+
+  <h3 class="sub">Portfolio analyzer</h3>
+  <div class="analyzer">
+    <div class="metric-grid" id="metrics"></div>
+    <div class="exposure">
+      <p class="card-label">Where your money really sits</p>
+      <div id="sectorBars"></div>
+    </div>
+  </div>
+  <ul class="flags" id="flags"></ul>
+</section>
+
+<!-- ============ 2. SIMULATE ============ -->
+<section class="panel" id="simulate">
+  <div class="panel-head">
+    <span class="step">02</span>
+    <div>
+      <h2>What-if simulator</h2>
+      <p>Choose a scenario, build your own, or replay a real crash on today's portfolio.</p>
+    </div>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-tab="preset" role="tab">Scenarios</button>
+    <button class="tab" data-tab="custom" role="tab">Build your own</button>
+    <button class="tab" data-tab="replay" role="tab">Replay a real crash</button>
+  </div>
+
+  <div class="tab-body" id="tab-preset">
+    <div class="scenario-grid" id="scenarioGrid"></div>
+  </div>
+
+  <div class="tab-body hidden" id="tab-custom">
+    <p class="hint">Set the move for one or more market factors. Factors you leave at 0 are filled in from how they moved together in past stress weeks.</p>
+    <div class="custom-grid" id="customGrid"></div>
+    <button class="btn btn-primary" id="runCustom">Run my scenario</button>
+  </div>
+
+  <div class="tab-body hidden" id="tab-replay">
+    <p class="hint">What would your current portfolio have done in a real crisis? We compare the actual result with what our model predicted, using only data from before 2020.</p>
+    <div class="scenario-grid" id="replayGrid"></div>
+  </div>
+
+  <div class="result hidden" id="result">
+    <div class="result-head">
+      <div>
+        <p class="card-label" id="resLabel"></p>
+        <p class="big-number" id="resValue"></p>
+        <p class="res-sub" id="resSub"></p>
+      </div>
+      <div class="res-side" id="resSide"></div>
+    </div>
+    <div class="impact" id="impactBars"></div>
+    <details class="implied" id="impliedBox">
+      <summary>How the model filled in the rest of the market</summary>
+      <div class="chips" id="impliedChips"></div>
+    </details>
+  </div>
+</section>
+
+<!-- ============ 3. AI REPORT ============ -->
+<section class="panel" id="report">
+  <div class="panel-head">
+    <span class="step">03</span>
+    <div>
+      <h2>AI risk report</h2>
+      <p>A language model explains the result in plain words. It only gets the computed facts and isn't allowed to make up numbers. The <b>Veritas check</b> then verifies every number it writes.</p>
+    </div>
+  </div>
+
+  <div class="report-controls">
+    <label class="field">
+      <span>Language</span>
+      <select id="lang">
+        <option value="English">English</option>
+        <option value="Russian">Русский</option>
+        <option value="Kazakh">Қазақша</option>
+      </select>
+    </label>
+    <label class="field grow">
+      <span>Gemini API key (free from Google AI Studio, kept only in this browser)</span>
+      <input type="password" id="apiKey" placeholder="Paste key, or leave empty for the offline report">
+    </label>
+    <label class="field">
+      <span>Model</span>
+      <input type="text" id="modelName" value="gemini-3.5-flash-lite">
+    </label>
+    <button class="btn btn-primary" id="genReport">Write my report</button>
+  </div>
+
+  <div class="report-out hidden" id="reportOut">
+    <div class="veritas" id="veritasBar"></div>
+    <article class="report-text" id="reportText"></article>
+    <details class="facts">
+      <summary>Facts the AI was given (the only numbers it may use)</summary>
+      <pre id="factsDump"></pre>
+    </details>
+  </div>
+  <p class="hint" id="reportHint">Run a scenario first, then write the report.</p>
+</section>
+
+<!-- ============ 4. EVIDENCE ============ -->
+<section class="panel" id="evidence">
+  <div class="panel-head">
+    <span class="step">04</span>
+    <div>
+      <h2>How we tested it, and where it fails</h2>
+      <p>A finance tool is only worth trusting if it beats a simple rule on data it has never seen. Here is our test, including the results that went against us.</p>
+    </div>
+  </div>
+
+  <div class="evidence-grid">
+    <div class="ev-card">
+      <p class="card-label">The model</p>
+      <p>For each of 31 assets, a <b>ridge regression</b> learns how its weekly return responds to the market, its own sector, interest rates and gold.
+        Weeks when the market fell get <b id="swVal">extra</b> weight, because assets behave differently in a crash.
+        When a scenario fixes only some factors, the rest are filled in from how they moved together in past stress weeks (a conditional Gaussian expectation).</p>
+    </div>
+    <div class="ev-card">
+      <p class="card-label">The test</p>
+      <p>Trained on <b>2010–2019</b> only. Tuned on two 2018 sell-offs. Tested on four later crises: COVID-19 (2020), the 2022 rate-hike bear market, the August 2024 carry-trade unwind and the April 2025 tariff shock.</p>
+      <p>Baselines: <b>“everything moves like the market”</b> and the textbook <b>CAPM beta</b>.</p>
+    </div>
+  </div>
+
+  <h3 class="sub">Average error per asset (percentage points, lower is better)</h3>
+  <div class="mode-switch" id="modeSwitch">
+    <button class="chip-btn active" data-mode="full">All sector moves known</button>
+    <button class="chip-btn" data-mode="market_only">Only the market move known</button>
+    <button class="chip-btn" data-mode="sector_only">Only the tech move known</button>
+  </div>
+  <div class="eval-table" id="evalTable"></div>
+  <p class="verdict" id="evalVerdict"></p>
+
+  <h3 class="sub">Who does it work for? Error by type of asset and investor</h3>
+  <p class="hint">Realistic mode (only the market move is known). A good average can hide a group the tool serves badly, so we checked.</p>
+  <div class="group-grid">
+    <div class="ev-card"><p class="card-label">By asset group · per-asset error, pp</p><div id="groupBars"></div></div>
+    <div class="ev-card"><p class="card-label">By example investor · whole-portfolio error, pp</p><div id="presetBars"></div></div>
+  </div>
+  <p class="verdict" id="groupVerdict"></p>
+
+  <h3 class="sub">Auditing the AI writer</h3>
+  <div class="group-grid">
+    <div class="ev-card">
+      <p class="card-label">Does the language model invent numbers?</p>
+      <p id="auditMain"></p>
+    </div>
+    <div class="ev-card">
+      <p class="card-label">Can invented numbers slip past the Veritas check?</p>
+      <p id="auditLeak"></p>
+    </div>
+  </div>
+
+  <h3 class="sub">Biggest misses</h3>
+  <div class="fails" id="fails"></div>
+  <div class="lessons">
+    <div class="ev-card">
+      <p class="card-label">What we learned</p>
+      <ul>
+        <li><b>Scenarios need detail.</b> When the scenario says which sectors move, our model beats both baselines on average, though not in every crisis: during the COVID crash the simple <q>moves like the market</q> rule did better. With only <q>the market falls X%</q>, it is about as good as a textbook beta. That is why our preset scenarios describe several factors at once.</li>
+        <li><b>2022 broke the old rules.</b> From 2010 to 2019, bonds rose when stocks fell, so the model expected bonds to protect you. In 2022 both fell, and oil stocks rose about 60%. Any model trained on calm-era data carries that blind spot.</li>
+        <li><b>Company news is invisible.</b> Meta's −62% in 2022 or Intel's −41% in 2024 came from company-specific events, which no factor model can see.</li>
+      </ul>
+    </div>
+    <div class="ev-card">
+      <p class="card-label">Limits &amp; responsible use</p>
+      <ul>
+        <li>Only 31 US-listed assets. Bitcoin's behaviour is poorly captured by stock-market factors.</li>
+        <li>Scenarios are instant shocks with no time horizon, fees or currency effects (e.g. USD/KZT for investors in Kazakhstan).</li>
+        <li>The AI report can phrase things badly. The Veritas check catches made-up numbers, not every bad interpretation.</li>
+        <li><b>This project is a prototype and is not financial advice.</b></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <p><b>MarketTwin AI</b> · Veritas AI International High School Hackathon 2026 · AI + Finance track</p>
+  <p>This project is a prototype and is not financial advice. Prices: Yahoo Finance via yfinance, <span id="dataEnd"></span>.</p>
+</footer>
+
+<script src="data/bundle.js?v=1"></script>
+<script src="data/ai_audit.js?v=1"></script>
+<script src="app.js?v=1"></script>
+</body>
+</html>

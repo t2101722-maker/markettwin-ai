@@ -1,0 +1,391 @@
+{
+ "protocol": {
+  "train": "2010-01-01 to 2019-12-31",
+  "tuning": "train 2010-2017, validate on Feb 2018 and Q4 2018 sell-offs",
+  "test_episodes": {
+   "covid_2020": "COVID-19 crash",
+   "bear_2022": "2022 rate-hike bear market",
+   "carry_2024": "Aug 2024 yen carry-trade unwind",
+   "tariff_2025": "April 2025 tariff shock"
+  }
+ },
+ "tuning_grid": [
+  {
+   "alpha": 0.0,
+   "stress_weight": 0.0,
+   "val_mae": 0.06383617772747423
+  },
+  {
+   "alpha": 0.0,
+   "stress_weight": 1.0,
+   "val_mae": 0.0627165876234225
+  },
+  {
+   "alpha": 0.0,
+   "stress_weight": 3.0,
+   "val_mae": 0.06245359997520937
+  },
+  {
+   "alpha": 0.0,
+   "stress_weight": 6.0,
+   "val_mae": 0.06268074481745685
+  },
+  {
+   "alpha": 0.001,
+   "stress_weight": 0.0,
+   "val_mae": 0.06377608708388421
+  },
+  {
+   "alpha": 0.001,
+   "stress_weight": 1.0,
+   "val_mae": 0.06270957672385231
+  },
+  {
+   "alpha": 0.001,
+   "stress_weight": 3.0,
+   "val_mae": 0.062447974999780026
+  },
+  {
+   "alpha": 0.001,
+   "stress_weight": 6.0,
+   "val_mae": 0.06266333002719664
+  },
+  {
+   "alpha": 0.01,
+   "stress_weight": 0.0,
+   "val_mae": 0.06373077804457869
+  },
+  {
+   "alpha": 0.01,
+   "stress_weight": 1.0,
+   "val_mae": 0.06272741230553444
+  },
+  {
+   "alpha": 0.01,
+   "stress_weight": 3.0,
+   "val_mae": 0.062432290842561244
+  },
+  {
+   "alpha": 0.01,
+   "stress_weight": 6.0,
+   "val_mae": 0.06260052507426478
+  },
+  {
+   "alpha": 0.03,
+   "stress_weight": 0.0,
+   "val_mae": 0.06607347550472017
+  },
+  {
+   "alpha": 0.03,
+   "stress_weight": 1.0,
+   "val_mae": 0.06423347813844396
+  },
+  {
+   "alpha": 0.03,
+   "stress_weight": 3.0,
+   "val_mae": 0.06315424199289149
+  },
+  {
+   "alpha": 0.03,
+   "stress_weight": 6.0,
+   "val_mae": 0.06291157827496861
+  }
+ ],
+ "best": {
+  "alpha": 0.01,
+  "stress_weight": 3.0,
+  "val_mae": 0.062432290842561244
+ },
+ "episodes": {
+  "covid_2020": {
+   "label": "COVID-19 crash",
+   "start": "2020-02-19",
+   "end": "2020-03-23",
+   "spy_move": -0.3371727693638181,
+   "modes": {
+    "full": {
+     "mae_ours": 0.10113513164599484,
+     "mae_ours_no_stress": 0.10255889149758594,
+     "mae_baseline_market": 0.0966962835339226,
+     "mae_baseline_capm": 0.1255418301612955,
+     "rank_corr_ours": 0.3656267104542967,
+     "rank_corr_capm": 0.05090311986863711,
+     "n_assets": 28
+    },
+    "market_only": {
+     "mae_ours": 0.11005319336112979,
+     "mae_ours_no_stress": 0.11181322284695004,
+     "mae_baseline_market": 0.11251665505995127,
+     "mae_baseline_capm": 0.11600811780811472,
+     "rank_corr_ours": 0.3616935483870968,
+     "rank_corr_capm": 0.21693548387096775,
+     "n_assets": 31
+    },
+    "sector_only": {
+     "mae_ours": 0.1399473791723735,
+     "mae_ours_no_stress": 0.14208462653333792,
+     "mae_baseline_market": 0.13560984191439657,
+     "mae_baseline_capm": 0.12908966434459507,
+     "rank_corr_ours": 0.03951612903225807,
+     "rank_corr_capm": 0.21693548387096775,
+     "n_assets": 31
+    }
+   }
+  },
+  "bear_2022": {
+   "label": "2022 rate-hike bear market",
+   "start": "2022-01-03",
+   "end": "2022-10-12",
+   "spy_move": -0.24496383714802195,
+   "modes": {
+    "full": {
+     "mae_ours": 0.14902470826188868,
+     "mae_ours_no_stress": 0.1526517078053729,
+     "mae_baseline_market": 0.20824901495042134,
+     "mae_baseline_capm": 0.18379471503932204,
+     "rank_corr_ours": 0.6507936507936508,
+     "rank_corr_capm": 0.49315818281335516,
+     "n_assets": 28
+    },
+    "market_only": {
+     "mae_ours": 0.18389250329429274,
+     "mae_ours_no_stress": 0.18972639316863357,
+     "mae_baseline_market": 0.19519392957201323,
+     "mae_baseline_capm": 0.1818384729413184,
+     "rank_corr_ours": 0.4185483870967743,
+     "rank_corr_capm": 0.5145161290322581,
+     "n_assets": 31
+    },
+    "sector_only": {
+     "mae_ours": 0.17021852683342326,
+     "mae_ours_no_stress": 0.17750675431843793,
+     "mae_baseline_market": 0.1946960047678791,
+     "mae_baseline_capm": 0.17921993502183933,
+     "rank_corr_ours": 0.5629032258064516,
+     "rank_corr_capm": 0.5145161290322581,
+     "n_assets": 31
+    }
+   }
+  },
+  "carry_2024": {
+   "label": "Aug 2024 yen carry-trade unwind",
+   "start": "2024-07-16",
+   "end": "2024-08-05",
+   "spy_move": -0.08405618253124114,
+   "modes": {
+    "full": {
+     "mae_ours": 0.05853891197996087,
+     "mae_ours_no_stress": 0.05864158384096913,
+     "mae_baseline_market": 0.08399336014192325,
+     "mae_baseline_capm": 0.06854939019400998,
+     "rank_corr_ours": 0.749863163656267,
+     "rank_corr_capm": 0.6655719759168035,
+     "n_assets": 28
+    },
+    "market_only": {
+     "mae_ours": 0.06454898815146104,
+     "mae_ours_no_stress": 0.06448144858668657,
+     "mae_baseline_market": 0.08216581129976006,
+     "mae_baseline_capm": 0.06311243890625316,
+     "rank_corr_ours": 0.6141129032258065,
+     "rank_corr_capm": 0.715725806451613,
+     "n_assets": 31
+    },
+    "sector_only": {
+     "mae_ours": 0.06546962131449709,
+     "mae_ours_no_stress": 0.06452596582073294,
+     "mae_baseline_market": 0.08673090436890307,
+     "mae_baseline_capm": 0.06614797259504486,
+     "rank_corr_ours": 0.7262096774193549,
+     "rank_corr_capm": 0.715725806451613,
+     "n_assets": 31
+    }
+   }
+  },
+  "tariff_2025": {
+   "label": "April 2025 tariff shock",
+   "start": "2025-04-02",
+   "end": "2025-04-08",
+   "spy_move": -0.12052703073878844,
+   "modes": {
+    "full": {
+     "mae_ours": 0.04031140010292058,
+     "mae_ours_no_stress": 0.04213834203994893,
+     "mae_baseline_market": 0.05166316312452112,
+     "mae_baseline_capm": 0.041303025963755687,
+     "rank_corr_ours": 0.6009852216748768,
+     "rank_corr_capm": 0.5905856595511768,
+     "n_assets": 28
+    },
+    "market_only": {
+     "mae_ours": 0.040352369245371306,
+     "mae_ours_no_stress": 0.04117997596426329,
+     "mae_baseline_market": 0.05190195430000017,
+     "mae_baseline_capm": 0.041608990996874866,
+     "rank_corr_ours": 0.6641129032258065,
+     "rank_corr_capm": 0.6584677419354839,
+     "n_assets": 31
+    },
+    "sector_only": {
+     "mae_ours": 0.044628226955992584,
+     "mae_ours_no_stress": 0.04533848045567348,
+     "mae_baseline_market": 0.052301845523765815,
+     "mae_baseline_capm": 0.04292294008916879,
+     "rank_corr_ours": 0.6471774193548387,
+     "rank_corr_capm": 0.6584677419354839,
+     "n_assets": 31
+    }
+   }
+  }
+ },
+ "overall_mae": {
+  "full": {
+   "ours": 0.08725253799769124,
+   "ours_no_stress": 0.08899763129596924,
+   "baseline_market": 0.11015045543769708,
+   "baseline_capm": 0.10479724033959581
+  },
+  "market_only": {
+   "ours": 0.09971176351306371,
+   "ours_no_stress": 0.10180026014163338,
+   "baseline_market": 0.11044458755793121,
+   "baseline_capm": 0.10064200516314029
+  },
+  "sector_only": {
+   "ours": 0.10506593856907159,
+   "ours_no_stress": 0.10736395678204558,
+   "baseline_market": 0.11733464914373612,
+   "baseline_capm": 0.104345128012662
+  }
+ },
+ "win_rate_vs_capm_market_only": 0.5080645161290323,
+ "portfolio_mae_market_only": {
+  "ours": 0.06334075369817728,
+  "baseline_market": 0.06767435774005362,
+  "baseline_capm": 0.06289631572528435
+ },
+ "failures": [
+  {
+   "ticker": "XOM",
+   "episode": "2022 rate-hike bear market",
+   "predicted": -0.2629,
+   "actual": 0.5977
+  },
+  {
+   "ticker": "CVX",
+   "episode": "2022 rate-hike bear market",
+   "predicted": -0.2887,
+   "actual": 0.3589
+  },
+  {
+   "ticker": "BTC-USD",
+   "episode": "2022 rate-hike bear market",
+   "predicted": -0.0967,
+   "actual": -0.5876
+  },
+  {
+   "ticker": "TLT",
+   "episode": "2022 rate-hike bear market",
+   "predicted": 0.1449,
+   "actual": -0.2933
+  },
+  {
+   "ticker": "META",
+   "episode": "2022 rate-hike bear market",
+   "predicted": -0.2405,
+   "actual": -0.6234
+  },
+  {
+   "ticker": "NFLX",
+   "episode": "COVID-19 crash",
+   "predicted": -0.4396,
+   "actual": -0.0671
+  },
+  {
+   "ticker": "INTC",
+   "episode": "Aug 2024 yen carry-trade unwind",
+   "predicted": -0.0813,
+   "actual": -0.4144
+  },
+  {
+   "ticker": "BA",
+   "episode": "COVID-19 crash",
+   "predicted": -0.3791,
+   "actual": -0.6878
+  }
+ ],
+ "group_error": {
+  "full": {
+   "Crypto": {
+    "n_assets": 1,
+    "mae_ours": 0.2056767947851998,
+    "mae_capm": 0.23800993863764078
+   },
+   "Cyclical stocks (banks, energy, industry)": {
+    "n_assets": 9,
+    "mae_ours": 0.08267846120400105,
+    "mae_capm": 0.10017865444942478
+   },
+   "Defensive stocks": {
+    "n_assets": 7,
+    "mae_ours": 0.06319732587539283,
+    "mae_capm": 0.08198428303233665
+   },
+   "Funds (index, bonds, gold)": {
+    "n_assets": 1,
+    "mae_ours": 0.025180956134341147,
+    "mae_capm": 0.04941214094669557
+   },
+   "Tech & growth stocks": {
+    "n_assets": 10,
+    "mae_ours": 0.10257258810520546,
+    "mae_capm": 0.1171402778653167
+   }
+  },
+  "market_only": {
+   "Crypto": {
+    "n_assets": 1,
+    "mae_ours": 0.21394299192866703,
+    "mae_capm": 0.23800993863764078
+   },
+   "Cyclical stocks (banks, energy, industry)": {
+    "n_assets": 9,
+    "mae_ours": 0.09974462158554746,
+    "mae_capm": 0.10017865444942478
+   },
+   "Defensive stocks": {
+    "n_assets": 7,
+    "mae_ours": 0.08073218145968172,
+    "mae_capm": 0.08198428303233665
+   },
+   "Funds (index, bonds, gold)": {
+    "n_assets": 4,
+    "mae_ours": 0.06246901389816561,
+    "mae_capm": 0.05874789287384056
+   },
+   "Tech & growth stocks": {
+    "n_assets": 10,
+    "mae_ours": 0.11644187568959463,
+    "mae_capm": 0.1171402778653167
+   }
+  }
+ },
+ "preset_portfolio_error": {
+  "Tech fan": {
+   "mae_ours": 0.06433665917667272,
+   "mae_capm": 0.06200744449759984
+  },
+  "Balanced starter": {
+   "mae_ours": 0.039607244982776665,
+   "mae_capm": 0.03554361405811585
+  },
+  "Dividends & defensives": {
+   "mae_ours": 0.0847833761130951,
+   "mae_capm": 0.08473353907680993
+  },
+  "Crypto + growth": {
+   "mae_ours": 0.11200378982068351,
+   "mae_capm": 0.11590477075579964
+  }
+ }
+}
