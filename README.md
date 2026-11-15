@@ -1,7 +1,7 @@
 # MarketTwin AI — See the risk before the market moves
 
 **Track:** AI + Finance
-**Team:** _names here_
+**Team:** Temirlan Amanzholov, Camilla Nessipbekova, Aiaru Melikhan
 **Live demo:** https://t2101722-maker.github.io/markettwin-ai/
 
 > This project is a prototype and is not financial advice.
