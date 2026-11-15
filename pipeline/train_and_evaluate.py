@@ -176,6 +176,10 @@ for f in failures:
 
 # Per-asset typical error in past crises -> shown in the app as a reliability badge
 asset_err = mo.groupby("ticker")["err"].apply(lambda x: float(x.abs().mean())).to_dict()
+# SPY is the given input in market-only mode, so its error there is trivially 0.
+# Use its error when it has to be inferred (tech-only mode) so uncertainty is not understated.
+so = rows[rows["mode"] == "sector_only"]
+asset_err["SPY"] = float((so.loc[so["ticker"] == "SPY", "ours"] - so.loc[so["ticker"] == "SPY", "actual"]).abs().mean())
 
 # Who does the model fail for? Error by asset group (full mode = best case, market_only = realistic)
 def group_of(t: str) -> str:
@@ -248,6 +252,11 @@ for t, (name, sector) in ASSETS.items():
     }
 
 corr = recent[TICKERS].corr().round(3)
+# Behaviour in the worst 20% of S&P 500 weeks since 2010. (Correlations computed only on those weeks
+# are biased low by the selection, so we export simple co-movement data instead.)
+sw = rets_all.loc[M.stress_mask(rets_all), TICKERS]
+stress_signs = ["".join("-" if np.isnan(v) else ("1" if v < 0 else "0") for v in row) for row in sw.values]
+stress_mean = {t: round(float(np.expm1(sw[t].mean())), 4) for t in TICKERS}
 model_out = {
     "generated": pd.Timestamp.now().strftime("%Y-%m-%d"),
     "data_end": str(prices.index[-1].date()),
@@ -255,6 +264,8 @@ model_out = {
     "stress_cov": np.round(cov_live, 8).tolist(),
     "assets": assets_out,
     "corr": {"tickers": TICKERS, "matrix": corr.values.tolist()},
+    "stress_weeks": {"tickers": TICKERS, "signs": stress_signs, "mean_return": stress_mean,
+                     "n": len(stress_signs), "since": str(rets_all.index[0].date())},
     "hyperparams": {"ridge_alpha": ALPHA, "stress_weight": SW},
 }
 

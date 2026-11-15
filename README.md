@@ -12,7 +12,9 @@ Beginner investors, such as students who just opened their first brokerage accou
 ## What we built
 A website where you enter your 3–6 holdings and how much money is in each, then:
 
-1. **Portfolio analyzer**: shows how many "effective" holdings you have, your typical yearly swing, how strongly your holdings move together, your sector exposure, and plain-language risk flags.
+1. **Portfolio analyzer**: shows how often *all* your holdings fell together in the worst 20% of S&P 500 weeks since 2010, your average move in such a week, your estimated loss if the market falls 10%, your typical yearly swing, your sector exposure, and plain-language risk flags. We started with calm-period correlation, but it badly misleads in a stress test. Over the last 3 years Apple and Microsoft were only 0.18 correlated week to week, versus 0.77 in 2020–2022. Correlation measured only on crash weeks is biased low by the selection. So the headline metric is a simple co-crash rate instead: 47% of bad weeks for the "Tech fan" example versus 12% for a balanced portfolio.
+
+**Example user:** a 17-year-old in Almaty who put $1,000 of summer-job savings into five US tech stocks and asks "what happens to my money if tech drops 20%?" before buying more.
 2. **What-if simulator**: pick a scenario ("tech falls 20%", "2022-style rate shock", …), build your own from 11 market factors, or **replay a real crash** (COVID-19, 2022, Aug 2024, Apr 2025) on today's portfolio. Results come asset by asset, in % and in dollars, with the model's typical error.
 3. **AI risk report**: Gemini explains the result in English, Russian or Kazakh. The language model gets only a JSON of computed facts. Our **Veritas check** then scans every number in its answer and flags any number our model did not produce. If there is no API key, a deterministic template report is used instead. Judges without a key can also open five real Gemini reports saved during the hackathon (English, Russian, Kazakh). The Veritas check re-runs on them live.
 

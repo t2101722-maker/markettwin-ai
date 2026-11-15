@@ -113,6 +113,9 @@ function renderHero() {
     ["“Moves like the market”", o.baseline_market, false],
   ];
   const max = Math.max(...rows.map(r => r[1]));
+  const mo = EVAL.overall_mae.market_only;
+  $("heroFoot").innerHTML = `Average error per asset, in percentage points, when a scenario says how sectors move. Lower is better. `
+    + `<b>Honest caveat:</b> if you only know the market's move, we tie with the CAPM beta (${pp(mo.ours)} vs ${pp(mo.baseline_capm)} pp). <a href="#evidence">Full results</a>.`;
   $("heroStatRows").innerHTML = rows.map(([n, v, ours]) => `
     <div class="stat ${ours ? "ours" : ""}">
       <span class="stat-name">${n}</span><span class="stat-val">${pp(v)} pp</span>
@@ -189,22 +192,31 @@ function analyze() {
   const mkt10 = T.reduce((s, t) => s + w[t] * assetMove(t, f10), 0);
   const top = Object.entries(sectors).sort((a, b) => b[1] - a[1])[0] || ["—", 0];
   const biggest = T.reduce((m, t) => (w[t] > (w[m] ?? -1) ? t : m), T[0]);
+  // Worst 20% of S&P 500 weeks since 2010: how often did every holding fall at once?
+  const SW = MODEL.stress_weeks;
+  const idx = T.map(t => SW.tickers.indexOf(t));
+  const weeks = SW.signs.filter(r => idx.every(j => r[j] !== "-"));
+  const allFall = weeks.length ? weeks.filter(r => idx.every(j => r[j] === "1")).length / weeks.length : 0;
+  const badWeek = T.reduce((s, t) => s + w[t] * SW.mean_return[t], 0);
   return {
     w, T, hhi, effN: 1 / hhi, vol: Math.sqrt(Math.max(variance, 0)),
     avgCorr: cs ? cw / cs : 1, sectors, mkt10, topSector: top, biggest,
+    allFall, badWeek, nWeeks: weeks.length,
   };
 }
 
 function riskFlags(A) {
   const flags = [];
   const { w, T } = A;
-  if (A.biggest && w[A.biggest] > 0.35) flags.push(`<b>${A.biggest}</b> is ${(w[A.biggest] * 100).toFixed(0)}% of your money. One company's bad news would hit the whole portfolio.`);
+  const FUNDS = ["SPY", "QQQ", "TLT", "GLD"];
+  const bigStock = T.filter(t => !FUNDS.includes(t)).sort((a, b) => w[b] - w[a])[0];
+  if (bigStock && w[bigStock] > 0.35) flags.push(`<b>${bigStock}</b> is ${(w[bigStock] * 100).toFixed(0)}% of your money. ${bigStock === "BTC-USD" ? "A single crypto crash" : "One company's bad news"} would hit the whole portfolio.`);
   if (A.topSector[1] > 0.5) flags.push(`<b>${(A.topSector[1] * 100).toFixed(0)}% in ${A.topSector[0]}.</b> A single sector shock reaches most of your portfolio at once.`);
-  if (A.avgCorr > 0.55) flags.push(`<b>Your holdings move together</b> (average correlation ${A.avgCorr.toFixed(2)}). Owning several of them diversifies less than it looks.`);
+  if (T.length > 1 && A.allFall > 0.3) flags.push(`<b>Diversification disappears in bad weeks.</b> In ${(A.allFall * 100).toFixed(0)}% of the worst market weeks since 2010, every one of your holdings fell at the same time. Owning several of them protects you less than it looks.`);
   if (A.vol > 0.3) flags.push(`<b>High swings:</b> in a typical year this mix moves about ±${(A.vol * 100).toFixed(0)}%, more than the S&P 500's usual ±15–20%.`);
   if (T.includes("BTC-USD")) flags.push(`<b>Bitcoin</b> is poorly explained by stock-market factors, so our scenario numbers for it are the least reliable.`);
   const deep = T.filter(t => ASSETS[t].max_drawdown < -0.6);
-  if (deep.length) flags.push(`<b>History check:</b> ${deep.map(t => `${t} once fell ${(ASSETS[t].max_drawdown * -100).toFixed(0)}%`).join(", ")} from a peak since ${deep.map(t => ASSETS[t].history_start.slice(0, 4)).sort()[0]}.`);
+  if (deep.length) flags.push(`<b>History check:</b> since 2010, ${deep.map(t => `${t} has fallen as much as ${(ASSETS[t].max_drawdown * -100).toFixed(0)}%`).join(", ")} from a previous high. Could you hold on through that?`);
   return flags;
 }
 
@@ -213,10 +225,12 @@ function renderAnalyzer() {
   if (!n) { $("metrics").innerHTML = ""; $("sectorBars").innerHTML = ""; $("flags").innerHTML = ""; return; }
   const A = analyze();
   const m = [
-    ["Acts like", `${A.effN.toFixed(1)}`, `equal-sized holdings (you own ${n}). Higher = more spread out.`],
-    ["Typical yearly swing", `±${(A.vol * 100).toFixed(0)}%`, "From the last 3 years of weekly prices and correlations."],
-    ["Moves together", A.avgCorr.toFixed(2), "Average correlation between your holdings (0 = independent, 1 = identical)."],
+    ["All fall together", n > 1 ? `${(A.allFall * 100).toFixed(0)}%` : "—", `of the worst S&P 500 weeks since 2010 (${A.nWeeks} with data for all your holdings) saw every holding drop at once. Lower = real diversification.`],
+    ["In an average bad week", pct(A.badWeek), "Your portfolio's average move in those worst weeks (S&P 500 average: " + pct(MODEL.stress_weeks.mean_return.SPY) + ")."],
     ["If the market falls 10%", pct(A.mkt10), "Stress-model estimate for your whole portfolio."],
+    ["Typical yearly swing", `±${(A.vol * 100).toFixed(0)}%`, `Calm-market estimate from the last 3 years. In calm times your holdings are only ${A.avgCorr.toFixed(2)} correlated, so look at the crash numbers above.`],
+    ["Spread across", `${A.effN.toFixed(1)}`, `equal-sized holdings' worth of weight (you own ${n}). This counts weights only, not how holdings move.`],
+    ["Biggest group", `${(A.topSector[1] * 100).toFixed(0)}%`, `of your money is in ${A.topSector[0]}.`],
   ];
   $("metrics").innerHTML = m.map(([a, b, c]) => `<div class="metric"><div class="m-name">${a}</div><div class="m-val">${b}</div><div class="m-note">${c}</div></div>`).join("");
   $("sectorBars").innerHTML = Object.entries(A.sectors).sort((a, b) => b[1] - a[1]).map(([s, v]) =>
@@ -380,8 +394,10 @@ function buildFacts() {
       number_of_holdings: L.rows.length,
       acts_like_n_equal_holdings: r1(A.effN),
       typical_yearly_swing_pct: r1(A.vol * 100),
-      average_correlation: Math.round(A.avgCorr * 100) / 100,
+      calm_period_average_correlation: Math.round(A.avgCorr * 100) / 100,
       largest_group: A.topSector[0], largest_group_pct: r1(A.topSector[1] * 100),
+      share_of_worst_market_weeks_in_which_every_holding_fell_pct: r1(A.allFall * 100),
+      portfolio_average_change_in_a_worst_market_week_pct: r1(A.badWeek * 100),
     },
     risk_flags: A.flags.map(f => f.replace(/<[^>]+>/g, "")),
   };
@@ -399,7 +415,9 @@ STRICT RULES
 2. Write percentages with one decimal exactly as in FACTS, like 12.3% (never round to 12%), and dollars like $123, with a dot as the decimal separator and no thousands separators.
 3. Never tell the user to buy or sell a specific asset. You may explain general ideas such as diversification or concentration.
 4. Explain WHY the most exposed holdings move as they do, using their type and sensitivity_to_factors (a sensitivity of 1.2 to Market means the asset tends to move a bit more than the market).
-5. For a historical replay, compare the model's prediction with what actually happened and explain the gap in plain words.
+5. In "Hidden risks", prefer the worst-market-weeks numbers over calm-period correlation, which understates how holdings move together in a crash. Read them exactly: share_of_worst_market_weeks_in_which_every_holding_fell_pct is a share of WEEKS (e.g. "in 46.9% of the worst weeks, every holding fell"), NOT a size of a fall. portfolio_average_change_in_a_worst_market_week_pct is the size of the average weekly move in those weeks.
+5a. Never write JSON field names or underscores. Use plain words a 16-year-old understands. Call assets by their company names.
+5b. For a historical replay, compare the model's prediction with what actually happened and explain the gap in plain words.
 6. At most 230 words. Use exactly these markdown headings (### ...), translated into ${lang}: Summary, Most exposed holdings, Why, Hidden risks, What to think about, How sure is this?
 7. In the last section mention the model's typical error (or its miss in the replay) and that this is a prototype, not financial advice.
 
@@ -424,7 +442,7 @@ function offlineReport(facts) {
     ...worst.map(h => `- ${h.ticker} is a ${h.type} holding. Its sensitivities are ${Object.entries(h.sensitivity_to_factors).map(([k, v]) => `${k} ${v}`).join(", ") || "small"}, so it reacts strongly to this kind of shock.`),
     `### Hidden risks`,
     `- Your ${facts.portfolio_stats.number_of_holdings} holdings act like ${facts.portfolio_stats.acts_like_n_equal_holdings} equal-sized ones, and ${facts.portfolio_stats.largest_group_pct}% sits in ${facts.portfolio_stats.largest_group}.`,
-    `- Average correlation between holdings is ${facts.portfolio_stats.average_correlation}.`,
+    `- In ${facts.portfolio_stats.share_of_worst_market_weeks_in_which_every_holding_fell_pct}% of the worst market weeks since 2010, all your holdings fell at the same time. In an average bad week the portfolio moved ${facts.portfolio_stats.portfolio_average_change_in_a_worst_market_week_pct}%.`,
     `### What to think about`,
     `- Would you be comfortable holding on through a loss like this one? If not, spreading money across groups that react differently to shocks reduces how much one event can hurt.`,
     `### How sure is this?`,
