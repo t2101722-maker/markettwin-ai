@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=1">
+<link rel="stylesheet" href="styles.css?v=2">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230c1016'/%3E%3Cpath d='M6 22l6-7 5 4 9-11' stroke='%23d9f26b' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 </head>
 <body>
@@ -142,6 +142,12 @@
     </div>
   </div>
 
+  <div class="samples">
+    <p class="card-label">No API key? Open a real Gemini report saved on 15 Nov 2026. The Veritas check re-runs live against today's model numbers.</p>
+    <div class="presets" id="samples"></div>
+  </div>
+
+  <p class="card-label" style="margin-top:28px">Or generate a new report for your own portfolio</p>
   <div class="report-controls">
     <label class="field">
       <span>Language</span>
@@ -256,8 +262,9 @@
   <p>This project is a prototype and is not financial advice. Prices: Yahoo Finance via yfinance, <span id="dataEnd"></span>.</p>
 </footer>
 
-<script src="data/bundle.js?v=1"></script>
-<script src="data/ai_audit.js?v=1"></script>
-<script src="app.js?v=1"></script>
+<script src="data/bundle.js?v=2"></script>
+<script src="data/ai_audit.js?v=2"></script>
+<script src="data/samples.js?v=2"></script>
+<script src="app.js?v=2"></script>
 </body>
 </html>

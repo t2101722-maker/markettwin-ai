@@ -2,7 +2,7 @@
 
 **Track:** AI + Finance
 **Team:** _names here_
-**Live demo:** https://t2101722-maker.github.io/markettwin-ai/ · **Video:** _link here_
+**Live demo:** https://t2101722-maker.github.io/markettwin-ai/
 
 > This project is a prototype and is not financial advice.
 
@@ -14,7 +14,7 @@ A website where you enter your 3–6 holdings and how much money is in each, the
 
 1. **Portfolio analyzer**: shows how many "effective" holdings you have, your typical yearly swing, how strongly your holdings move together, your sector exposure, and plain-language risk flags.
 2. **What-if simulator**: pick a scenario ("tech falls 20%", "2022-style rate shock", …), build your own from 11 market factors, or **replay a real crash** (COVID-19, 2022, Aug 2024, Apr 2025) on today's portfolio. Results come asset by asset, in % and in dollars, with the model's typical error.
-3. **AI risk report**: Gemini explains the result in English, Russian or Kazakh. The language model gets only a JSON of computed facts. Our **Veritas check** then scans every number in its answer and flags any number our model did not produce. If there is no API key, a deterministic template report is used instead.
+3. **AI risk report**: Gemini explains the result in English, Russian or Kazakh. The language model gets only a JSON of computed facts. Our **Veritas check** then scans every number in its answer and flags any number our model did not produce. If there is no API key, a deterministic template report is used instead. Judges without a key can also open five real Gemini reports saved during the hackathon (English, Russian, Kazakh). The Veritas check re-runs on them live.
 
 ## What we added
 Our own idea. On top of the simulator, we added:

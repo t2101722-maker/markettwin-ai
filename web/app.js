@@ -554,6 +554,39 @@ async function generateReport() {
     : "Every number in this report matches a value our model computed.";
 }
 
+function showReport(text, facts, source) {
+  $("factsDump").textContent = JSON.stringify(facts, null, 2);
+  const { html, stats } = veritasRender(text, facts);
+  $("reportText").innerHTML = html;
+  $("veritasBar").innerHTML = `
+    <b>Veritas check</b>
+    <span class="vbadge good">${stats.ok} numbers verified</span>
+    <span class="vbadge ${stats.bad ? "bad" : "neutral"}">${stats.bad} not found in facts${stats.bad ? ": " + stats.badList.map(escapeHtml).join(", ") : ""}</span>
+    <span class="vbadge neutral">written by ${escapeHtml(source)}</span>`;
+  $("reportOut").classList.remove("hidden");
+  $("reportHint").textContent = stats.bad
+    ? "Red numbers were not produced by our model. Don't trust them."
+    : "Every number in this report matches a value our model computed.";
+}
+
+function renderSamples() {
+  const S = window.MT_SAMPLES || [];
+  const LANG = { English: "EN", Russian: "RU", Kazakh: "KZ" };
+  S.forEach(s => {
+    const b = el("button", "chip-btn", `${s.portfolio} · ${s.scenario} · ${LANG[s.lang] || s.lang}`);
+    b.onclick = () => {
+      loadPortfolio(PORTFOLIOS.find(p => p.name === s.portfolio));
+      const sc = SCENARIOS.find(x => x.name === s.scenario);
+      runScenario({ kind: "scenario", name: sc.name, shocks: sc.shocks });
+      document.querySelectorAll("#scenarioGrid .scn").forEach((x, i) => x.classList.toggle("active", SCENARIOS[i] === sc));
+      document.querySelectorAll("#samples .chip-btn").forEach(x => x.classList.toggle("active", x === b));
+      showReport(s.text, buildFacts(), `${s.model} (saved ${s.date})`);
+      $("reportOut").scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+    $("samples").appendChild(b);
+  });
+}
+
 /* ------------------------------------------------------------------ evidence */
 function renderEval() {
   const mode = state.evalMode;
@@ -648,6 +681,7 @@ function init() {
   $("modelName").value = "gemini-3.5-flash-lite";
   renderGroups();
   renderAudit();
+  renderSamples();
   loadPortfolio(PORTFOLIOS[0]);
 }
 
