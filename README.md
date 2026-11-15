@@ -2,7 +2,7 @@
 
 **Track:** AI + Finance
 **Team:** _names here_
-**Live demo:** _GitHub Pages link here_ · **Video:** _link here_
+**Live demo:** https://t2101722-maker.github.io/markettwin-ai/ · **Video:** _link here_
 
 > This project is a prototype and is not financial advice.
 
